@@ -12,7 +12,8 @@ import net.kopeph.ld35.entity.Player;
 public final class Game extends PApplet {
 	public static final Game game = new Game();
 
-	public static final World world = new World(new Vec2(0, -9.8f), false);
+	//the game isn't based on real-world units, so gravity is arbitrary
+	public static final World world = new World(new Vec2(0, -15), false);
 	public static final ViewTransform transform = new ViewTransform();
 
 	private Player player;
@@ -32,7 +33,7 @@ public final class Game extends PApplet {
 		frameRate(60);
 		noStroke();
 
-		player = new Player(0, 10);
+		player = new Player(0, 5);
 		platforms[0] = new Platform(0, 0, 2.0f, 0.25f);
 		platforms[1] = new Platform(8, 0, 4.0f, 0.25f);
 	}
@@ -43,6 +44,8 @@ public final class Game extends PApplet {
 		int velocityIterations = 6;
 		int positionIterations = 3;
 
+		player.move(left, right);
+
 		world.step(timeStep, velocityIterations, positionIterations);
 
 		transform.follow(player, timeStep);
@@ -52,25 +55,18 @@ public final class Game extends PApplet {
 		platforms[0].draw();
 		platforms[1].draw();
 		transform.resetMatrix();
-
-		//debug movement
-		if (left)
-			player.body.applyLinearImpulse(new Vec2(-0.02f, 0), player.body.getPosition());
-		if (right)
-			player.body.applyLinearImpulse(new Vec2( 0.02f, 0), player.body.getPosition());
 	}
 
 	private boolean left, right;
 
 	@Override
 	public void keyPressed() {
-		if (key == 'a') {
+		if (key == 'a')
 			left = true;
-		} else if (key == 'd') {
+		else if (key == 'd')
 			right = true;
-		} else if (key == 'w') {
-			player.body.applyLinearImpulse(new Vec2( 0, 0.6f), player.body.getPosition());
-		}
+		else if (key == 'w' || key == ' ')
+			player.jump();
 	}
 
 	@Override
