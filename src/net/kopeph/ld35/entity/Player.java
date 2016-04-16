@@ -27,6 +27,7 @@ public class Player extends Entity {
 		playerDef.type = BodyType.DYNAMIC;
 		playerDef.fixedRotation = true;
 		playerDef.position.set(x, y);
+		playerDef.userData = this;
 
 		//create main (collision) fixture
 		CircleShape playerShape = new CircleShape();
@@ -56,12 +57,17 @@ public class Player extends Entity {
 		game.world.setContactListener(new ContactListener() {
 			@Override
 			public void beginContact(Contact contact) {
-				sensorCollisions++;
+				//we're tagging the body with `this` as userData, to
+				if ((contact.getFixtureA().isSensor() && contact.getFixtureA().getBody().getUserData() instanceof Player) ||
+				    (contact.getFixtureB().isSensor() && contact.getFixtureB().getBody().getUserData() instanceof Player))
+					sensorCollisions++;
 			}
 
 			@Override
 			public void endContact(Contact contact) {
-				sensorCollisions--;
+				if ((contact.getFixtureA().isSensor() && contact.getFixtureA().getBody().getUserData() instanceof Player) ||
+				    (contact.getFixtureB().isSensor() && contact.getFixtureB().getBody().getUserData() instanceof Player))
+					sensorCollisions--;
 			}
 
 			@Override
@@ -86,6 +92,7 @@ public class Player extends Entity {
 	public void jump() {
 		if (sensorCollisions > 0) //if player is on ground
 			body.setLinearVelocity(new Vec2(body.getLinearVelocity().x, 6.0f));
+		System.out.println(sensorCollisions);
 	}
 
 	@Override
@@ -103,7 +110,7 @@ public class Player extends Entity {
 		game.noStroke();
 
 		//debug sensor
-		game.fill(0xAA7F7FFF); //transparent light blue
+		game.fill(sensorCollisions > 0? 0xFF00FF00 : 0xFF0000FF); //transparent light blue
 		game.rectMode(PConstants.RADIUS);
 		game.rect(position.x, position.y - RADIUS, RADIUS/4, RADIUS/8);
 	}

@@ -1,8 +1,8 @@
 package net.kopeph.ld35;
 
 import processing.core.PApplet;
-import processing.core.PShape;
 
+import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 
@@ -15,12 +15,10 @@ public final class Game extends PApplet {
 	//the game isn't based on real-world units, so gravity is arbitrary
 	public static final World world = new World(new Vec2(0, -15), false);
 	public static final ViewTransform transform = new ViewTransform();
+	public static final Audio audio = new Audio();
 
 	private Player player;
 	private Platform[] platforms = new Platform[2];
-
-	private PShape softRect;
-	private PShape wonkRect;
 
 	@Override
 	public void settings() {
@@ -36,6 +34,13 @@ public final class Game extends PApplet {
 		player = new Player(0, 5);
 		platforms[0] = new Platform(0, 0, 2.0f, 0.25f);
 		platforms[1] = new Platform(8, 0, 4.0f, 0.25f);
+
+		//increased from 8 to 16 to accomodate more complex convex hulls
+		//can and will be decreased again if it becomes a performance bottleneck
+		Settings.maxPolygonVertices = 16;
+
+		//load music
+		audio.playMusic("Lite Cranberry Basa.wav");
 	}
 
 	@Override
@@ -55,6 +60,13 @@ public final class Game extends PApplet {
 		platforms[0].draw();
 		platforms[1].draw();
 		transform.resetMatrix();
+	}
+
+	@Override
+	public void stop() {
+		//I seriously don't know if this is important?
+		audio.close();
+		super.stop();
 	}
 
 	private boolean left, right;
