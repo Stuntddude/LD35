@@ -1,14 +1,13 @@
 package net.kopeph.ld35.entity;
 
-import net.kopeph.ld35.Game;
-import net.kopeph.ld35.util.Vector2;
+import org.jbox2d.dynamics.Body;
 
-public class Entity {
+import net.kopeph.ld35.Game;
+
+abstract public class Entity {
 	protected static final Game game = Game.game;
 
-	private Vector2 pos;
+	public Body body;
 
-	public Entity() {
-
-	}
+	abstract public void draw();
 }
