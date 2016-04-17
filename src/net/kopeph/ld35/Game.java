@@ -51,7 +51,7 @@ public final class Game extends PApplet {
 		platforms[1] = new Platform(8, 0, 4.0f, 0.25f);
 
 		//load music
-		audio.playMusic("Old Cranberries Test.wav");
+//		audio.playMusic("Old Cranberries Test.wav");
 		//calculate beat period from beat frequency
 		beatInterval = 60.0f/142;
 

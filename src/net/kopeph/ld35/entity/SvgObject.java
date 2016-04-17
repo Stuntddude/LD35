@@ -18,13 +18,10 @@ public class SvgObject extends Entity {
 	private final float bx, by, bhx, bhy, brad;
 	private final boolean rot;
 	private final int bar1, bar2, bars;
-
 	private final Vec2[] points;
 
 	//???????
 	private Fixture currentFixture;
-
-	//???
 	private float x, y, hx, hy, rad;
 
 	public SvgObject(String line) {
@@ -64,16 +61,13 @@ public class SvgObject extends Entity {
 
 		rot = rotating;
 
-		//load vertices
+		//load unscaled vertices for later use
 		String[] coords = game.loadStrings(parts[0] + ".txt");
-		Vec2[] vertices = new Vec2[coords.length]; //the array used by box2d
-		points = new Vec2[coords.length]; //unscaled points stored for later use by us
+		points = new Vec2[coords.length];
 		for (int i = 0; i < coords.length; ++i) {
 			String[] pair = coords[i].split(",");
 			points[i] = new Vec2(Float.parseFloat(pair[0]),
 			                     Float.parseFloat(pair[1]));
-			vertices[i] = new Vec2((points[i].x - 0.5f)*ahx*2,
-			                       (points[i].y - 0.5f)*ahy*2);
 		}
 
 		BodyDef bodyDef = new BodyDef();
@@ -81,100 +75,68 @@ public class SvgObject extends Entity {
 		bodyDef.position.set(ax, ay);
 		bodyDef.angle = arad;
 
+
+		FixtureDef fixture = getFixtureDef(ax, ay, ahx, ahy, arad);
+
+		body = game.world.createBody(bodyDef);
+		currentFixture = body.createFixture(fixture);
+	}
+
+	private FixtureDef getFixtureDef(float _x, float _y, float _hx, float _hy, float _rad) {
+		//update current transform properties (for rendering)
+		x = _x;
+		y = _y;
+		hx = _hx;
+		hy = _hy;
+		rad = _rad;
+
+		//create a set of scaled coordinates
+		Vec2[] vertices = new Vec2[points.length];
+		for (int i = 0; i < points.length; ++i)
+			vertices[i] = new Vec2((points[i].x - 0.5f)*hx*2,
+			                       (points[i].y - 0.5f)*hy*2);
+
+		//create shape
 		PolygonShape polygon = new PolygonShape();
 		polygon.set(vertices, vertices.length);
 
+		//create fixture
 		FixtureDef fixture = new FixtureDef();
 		fixture.shape = polygon;
 		fixture.density = 0.5f;
 		fixture.friction = 1.0f;
 		fixture.restitution = 0.0f;
 
-		body = game.world.createBody(bodyDef);
-		currentFixture = body.createFixture(fixture);
-
-		//TODO: refactor this shit
-		x = ax;
-		y = ay;
-		hx = ahx;
-		hy = ahy;
-		rad = arad;
+		return fixture;
 	}
 
-	private int lastBeat = 0;
+	private int lastBeat = -1;
 
 	@Override
 	public void draw() {
 		float time = game.elapsedNanos/1e9f;
 		int beat = ((int)(time/game.beatInterval)) % bars;
 
-		if (beat != lastBeat) {
+		if (beat != lastBeat && beat == bar1 || beat == bar2) {
 			//I don't know if I have to replace the shape or the whole fixture
 			//so I'm playing it "safe" and replacing the whole fixture
+			FixtureDef fixture;
 
 			if (beat == bar1) {
-				//create set of scaled coordinates
-				Vec2[] vertices = new Vec2[points.length];
-				for (int i = 0; i < points.length; ++i)
-					vertices[i] = new Vec2((points[i].x - 0.5f)*bhx*2,
-					                       (points[i].y - 0.5f)*bhy*2);
-
-				//create shape
-				PolygonShape polygon = new PolygonShape();
-				polygon.set(vertices, vertices.length);
-
-				//create fixture
-				FixtureDef fixture = new FixtureDef();
-				fixture.shape = polygon;
-				fixture.density = 0.5f;
-				fixture.friction = 1.0f;
-				fixture.restitution = 0.0f;
-
-				//replace current fixture with new one
-				body.destroyFixture(currentFixture);
-				currentFixture = body.createFixture(fixture);
+				fixture = getFixtureDef(bx, by, bhx, bhy, brad);
 
 				//move body to its new location
 				body.setTransform(new Vec2(bx, by), brad);
-
-				//update properties for rendering
-				x = bx;
-				y = by;
-				hx = bhx;
-				hy = bhy;
-				rad = brad;
-			} else if (beat == bar2) { //XXX: TODO: FIXME: HOLY FUCK THIS CODE IS NOT DRY
-				//create set of scaled coordinates
-				Vec2[] vertices = new Vec2[points.length];
-				for (int i = 0; i < points.length; ++i)
-					vertices[i] = new Vec2((points[i].x - 0.5f)*ahx*2,
-					                       (points[i].y - 0.5f)*ahy*2);
-
-				//create shape
-				PolygonShape polygon = new PolygonShape();
-				polygon.set(vertices, vertices.length);
-
-				//create fixture
-				FixtureDef fixture = new FixtureDef();
-				fixture.shape = polygon;
-				fixture.density = 0.5f;
-				fixture.friction = 1.0f;
-				fixture.restitution = 0.0f;
-
-				//replace current fixture with new one
-				body.destroyFixture(currentFixture);
-				currentFixture = body.createFixture(fixture);
+			} else {
+				fixture = getFixtureDef(ax, ay, ahx, ahy, arad);
 
 				//move body to its new location
 				body.setTransform(new Vec2(ax, ay), arad);
-
-				//update properties for rendering
-				x = ax;
-				y = ay;
-				hx = ahx;
-				hy = ahy;
-				rad = arad;
 			}
+
+			//replace current fixture with new one
+			body.destroyFixture(currentFixture);
+			currentFixture = body.createFixture(fixture);
 		}
 
 		lastBeat = beat;
