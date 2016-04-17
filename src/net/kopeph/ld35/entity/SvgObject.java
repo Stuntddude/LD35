@@ -115,28 +115,39 @@ public class SvgObject extends Entity {
 	@Override
 	public void draw() {
 		float time = game.elapsedNanos/1e9f;
-		int beat = ((int)(time/game.beatInterval)) % bars;
+		int rawBeat = PApplet.round(time/game.beatInterval);
+		int beat = rawBeat % bars;
 
-		if (beat != lastBeat && beat == bar1 || beat == bar2) {
+		float diff = time/game.beatInterval - rawBeat;
+		float f = PApplet.norm(diff, -0.5f, 0.0f); //normalized lerp factor for transformation
+
+		//if we are in the middle of a transition
+		if (f > 0.0f && f < 1.0f && (beat == bar1 || beat == bar2)) {
 			//I don't know if I have to replace the shape or the whole fixture
 			//so I'm playing it "safe" and replacing the whole fixture
 			FixtureDef fixture;
 
 			if (beat == bar1) {
-				fixture = getFixtureDef(bx, by, bhx, bhy, brad);
+				fixture = getFixtureDef(PApplet.lerp(ax,   bx,   f),
+				                        PApplet.lerp(ay,   by,   f),
+				                        PApplet.lerp(ahx,  bhx,  f),
+				                        PApplet.lerp(ahy,  bhy,  f),
+				                        PApplet.lerp(arad, brad, f));
 
-				//move body to its new location
-				body.setTransform(new Vec2(bx, by), brad);
 			} else {
-				fixture = getFixtureDef(ax, ay, ahx, ahy, arad);
-
-				//move body to its new location
-				body.setTransform(new Vec2(ax, ay), arad);
+				fixture = getFixtureDef(PApplet.lerp(bx,   ax,   f),
+				                        PApplet.lerp(by,   ay,   f),
+				                        PApplet.lerp(bhx,  ahx,  f),
+				                        PApplet.lerp(bhy,  ahy,  f),
+				                        PApplet.lerp(brad, arad, f));
 			}
 
 			//replace current fixture with new one
 			body.destroyFixture(currentFixture);
 			currentFixture = body.createFixture(fixture);
+
+			//move body to its new location
+			body.setTransform(new Vec2(x, y), rad);
 		}
 
 		lastBeat = beat;
