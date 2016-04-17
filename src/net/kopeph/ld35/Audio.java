@@ -7,10 +7,11 @@ public final class Audio {
 	private final Minim minim = new Minim(Game.game);
 
 	AudioPlayer music;
+	float beatInterval; //in seconds
 
 	public void playMusic(String filename) {
 		music = minim.loadFile(filename);
-		music.play();
+		music.loop();
 	}
 
 	//supposedly, calling this before program exit in PApplet.stop() is important

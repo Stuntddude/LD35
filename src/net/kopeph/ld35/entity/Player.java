@@ -36,7 +36,7 @@ public class Player extends Entity {
 		FixtureDef playerFixture = new FixtureDef();
 		playerFixture.shape = playerShape;
 		playerFixture.density = 0.5f;
-		playerFixture.friction = 0.4f;
+		playerFixture.friction = 0.3f;
 		playerFixture.restitution = 0.01f;
 
 		//create a sensor fixture at the bottom of the player

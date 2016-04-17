@@ -20,6 +20,8 @@ public final class Game extends PApplet {
 	private Player player;
 	private Platform[] platforms = new Platform[2];
 
+	public float beatInterval;
+
 	@Override
 	public void settings() {
 		size(640, 480, P3D);
@@ -41,6 +43,8 @@ public final class Game extends PApplet {
 
 		//load music
 		audio.playMusic("Lite Cranberry Basa.wav");
+		//calculate beat period from beat frequency
+		beatInterval = 60.0f/142;
 	}
 
 	@Override
