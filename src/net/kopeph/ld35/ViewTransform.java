@@ -41,6 +41,7 @@ public final class ViewTransform {
 	}
 
 	private static final float MAX_FOLLOW_DISTANCE = 1.0f;
+
 	/**
 	 * Move {@link #offset} so that the given entity gradually moves to the center
 	 * of the screen.
@@ -48,6 +49,7 @@ public final class ViewTransform {
 	 * @param dt time in seconds since the last call.
 	 */
 	public void follow(Entity entity, float dt) {
+		//TODO: replace with a smoother follow cam like the one in ICECUBE
 		Vec2 position = entity.body.getPosition();
 		Vector2 deltaOffset = new Vector2(position.x, position.y).subEquals(offset);
 
@@ -59,9 +61,5 @@ public final class ViewTransform {
 			offset.x = position.x + MAX_FOLLOW_DISTANCE;
 		if (deltaOffset.y < -MAX_FOLLOW_DISTANCE)
 			offset.y = position.y + MAX_FOLLOW_DISTANCE;
-	}
-
-	public void shake(float t, float shk) {
-
 	}
 }

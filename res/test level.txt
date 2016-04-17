@@ -1,0 +1,13 @@
+Dingbat Star Fullcent.svg:385,308,85,63
+Dot Bar.svg:424,358,111,71
+Dot Bar Sans T1.svg:272,118,247,138
+Dot Bar Sans T1.svg:224,306,318,215
+Dot Bar Sans T1.svg:319,192,402,273
+Dot Bar Sans T1.svg:698,456,6,32
+Dot Bar Sans T1.svg:123,135,346,342
+Dot Bar Sans T1.svg:194,129,715,225
+Dot Bar Sans T1.svg:283,264,256,188
+Dot Bar Sans T1.svg:169,-7,286,400
+Dot Bar Sans T1.svg:457,327,296,29
+Dot Bar Sans T1.svg:285,-64,247,444
+Dot Bar Sans T1.svg:80,-17,398,387
