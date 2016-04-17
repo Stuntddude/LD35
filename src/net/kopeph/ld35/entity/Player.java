@@ -43,13 +43,13 @@ public class Player extends Entity {
 		FixtureDef playerFixture = new FixtureDef();
 		playerFixture.shape = playerShape;
 		playerFixture.density = 0.5f;
-		playerFixture.friction = 0.3f;
-		playerFixture.restitution = 0.01f;
+		playerFixture.friction = 0.1f;
+		playerFixture.restitution = 0.02f;
 
 		//create a sensor fixture at the bottom of the player
 		//used to detect whether the player is currently grounded, for sick jumpz
 		PolygonShape sensorShape = new PolygonShape();
-		sensorShape.setAsBox(RADIUS/4, RADIUS/8, new Vec2(0, -RADIUS), 0);
+		sensorShape.setAsBox(RADIUS/2, RADIUS/8, new Vec2(0, -RADIUS), 0);
 
 		FixtureDef sensorFixture = new FixtureDef();
 		sensorFixture.shape = sensorShape;
@@ -90,10 +90,13 @@ public class Player extends Entity {
 	}
 
 	public void move(boolean left, boolean right) {
-		if (left && !right && body.getLinearVelocity().x > -MAX_VEL)
-			body.applyForce(new Vec2(-2.5f, 0), body.getPosition());
-		else if (right && body.getLinearVelocity().x < MAX_VEL)
-			body.applyForce(new Vec2( 2.5f, 0), body.getPosition());
+		float velocity = body.getLinearVelocity().x;
+		if (left && !right && velocity > -MAX_VEL)
+			body.applyForce(new Vec2(-5.0f, 0), body.getPosition());
+		else if (right && velocity < MAX_VEL)
+			body.applyForce(new Vec2( 5.0f, 0), body.getPosition());
+		else if (sensorCollisions > 0 && PApplet.abs(velocity) > 0.1f)
+			body.applyForce(new Vec2(velocity > 0? -2.5f : 2.5f, 0), body.getPosition());
 	}
 
 	public void jump() {
@@ -119,7 +122,7 @@ public class Player extends Entity {
 		//debug sensor
 		game.fill(sensorCollisions > 0? 0xFF00FF00 : 0xFF0000FF); //transparent light blue
 		game.rectMode(PConstants.RADIUS);
-		game.rect(position.x, position.y - RADIUS, RADIUS/4, RADIUS/8);
+		game.rect(position.x, position.y - RADIUS, RADIUS/2, RADIUS/8);
 
 
 		LocationInfo li = new LocationInfo();

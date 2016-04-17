@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 744.09448819 1052.3622047"
+   width="473.28201"
+   height="768.85901"
+   viewBox="0 0 473.28203 768.85903"
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="drawing.svg">
+   sodipodi:docname="Wonk Rect Ol.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="221.76345"
+     inkscape:cx="-222.50912"
      inkscape:cy="521.80159"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -34,8 +34,9 @@
      inkscape:window-width="1680"
      inkscape:window-height="997"
      inkscape:window-x="-8"
-     inkscape:window-y="210"
-     inkscape:window-maximized="1" />
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     units="px" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -51,12 +52,13 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(0,-283.50318)">
     <path
-       style="fill:#4e8c92;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 138.57143,170.93363 608.57142,205.21935 520,930.93363 185.71429,936.64792 Z"
-       id="path4136"
+       sodipodi:nodetypes="ccccc"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccc" />
+       id="path4682"
+       d="M 1.6026341,285.1236 471.60262,319.40932 383.0312,1045.1236 48.745494,1050.8379 Z"
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>
