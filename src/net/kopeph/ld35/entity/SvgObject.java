@@ -1,31 +1,30 @@
 package net.kopeph.ld35.entity;
+import processing.core.PConstants;
 import processing.core.PShape;
 
-public class SvgObject extends Entity{
-	private PShape svg;
+public class SvgObject extends Entity {
+	private static final float SCALE = 100;
+
+	private PShape shape;
 	private float x, y, hx, hy;
-	public SvgObject(String filename) {
-		int len = filename.length();
-		int ch = filename.indexOf(":");
-		svg = game.loadShape(filename.substring(0, ch));
-		System.out.println('"' + filename.substring(0, ch) + '"');
-		//x = Float.parseFloat(filename.substring(ch+1, ch = filename.indexOf(",", ch+1)));
-		//System.out.println('"' + x + '"');
-		System.out.println('"' + filename.substring(ch+1, ch = filename.indexOf(",", ch+1)) + '"');
-		//y = Float.parseFloat(filename.substring(ch+1, ch = filename.indexOf(",", ch+1)));
-		//System.out.println('"' + y + '"');
-		System.out.println('"' + filename.substring(ch+1, ch = filename.indexOf(",", ch+1)) + '"');
-		//hx = Float.parseFloat(filename.substring(ch+1, ch = filename.indexOf(",", ch+1)));
-		//System.out.println('"' + hx + '"');
-		System.out.println('"' + filename.substring(ch+1, ch = filename.indexOf(",", ch+1)) + '"');
-		//hy = Float.parseFloat(filename.substring(ch+1));
-		//System.out.println('"' + hy + '"');
-		System.out.println('"' + filename.substring(ch+1) + '"');
+
+	public SvgObject(String line) {
+		String[] parts = line.split(":");
+		shape = game.loadShape(parts[0]);
+		String[] numbers = parts[1].split(",");
+		float left = Float.parseFloat(numbers[0])/SCALE;
+		float top = Float.parseFloat(numbers[1])/SCALE;
+		float width = Float.parseFloat(numbers[2])/SCALE;
+		float height = Float.parseFloat(numbers[3])/SCALE;
+		hx = width/2;
+		hy = height/2;
+		x = left + hx;
+		y = top + hy;
 	}
-	
+
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
-		game.shape(svg, x, y, hx, hy);
+		game.shapeMode(PConstants.CENTER);
+		game.shape(shape, x, y, hx*2, hy*2);
 	}
 }

@@ -16,9 +16,9 @@ public final class Game extends PApplet {
 	public static final World world = new World(new Vec2(0, -15), false);
 	public static final ViewTransform transform = new ViewTransform();
 	public static final Audio audio = new Audio();
-	
+
 	private Player player;
-	private Level[] levels = new Level[1];
+	private Level level;
 	private Platform[] platforms = new Platform[2];
 
 	public float beatInterval;
@@ -33,9 +33,9 @@ public final class Game extends PApplet {
 	public void setup() {
 		frameRate(60);
 		noStroke();
-		
-		levels[0] = new Level("res/test level.txt");
-		
+
+		level = new Level("res/test level.txt");
+
 		player = new Player(0, 5);
 		platforms[0] = new Platform(0, 0, 2.0f, 0.25f);
 		platforms[1] = new Platform(8, 0, 4.0f, 0.25f);
@@ -63,9 +63,10 @@ public final class Game extends PApplet {
 		transform.follow(player, timeStep);
 		transform.applyMatrix();
 		background(0);
-		player.draw();
+		level.draw();
 		platforms[0].draw();
 		platforms[1].draw();
+		player.draw();
 		transform.resetMatrix();
 	}
 
