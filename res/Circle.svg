@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 744.09448819 1052.3622047"
+   width="458.57001"
+   height="458.57001"
+   viewBox="0 0 458.57001 458.57001"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="Circle.svg">
   <defs
      id="defs4" />
@@ -25,16 +25,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="406.79475"
-     inkscape:cy="554.09163"
+     inkscape:zoom="0.24748737"
+     inkscape:cx="-50.536617"
+     inkscape:cy="761.4155"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1680"
-     inkscape:window-height="997"
-     inkscape:window-x="-8"
-     inkscape:window-y="210"
+     inkscape:window-width="1556"
+     inkscape:window-height="855"
+     inkscape:window-x="44"
+     inkscape:window-y="1"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -44,19 +44,26 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(0,-593.79219)">
     <circle
-       style="fill:#fa8c4e;fill-opacity:1;stroke:none;stroke-opacity:1"
+       style="fill:#fa8c4e;fill-opacity:1;stroke:none"
        id="path4138"
        cx="365"
        cy="467.36221"
-       r="229.28572" />
+       r="229.28572"
+       sodipodi:cx="365"
+       sodipodi:cy="467.36221"
+       sodipodi:rx="229.28572"
+       sodipodi:ry="229.28572"
+       transform="translate(-135.71428,355.71427)"
+       d="m 594.28572,467.36221 c 0,126.63101 -102.65471,229.28572 -229.28572,229.28572 -126.63101,0 -229.28572,-102.65471 -229.28572,-229.28572 0,-126.631 102.65471,-229.28572 229.28572,-229.28572 126.63101,0 229.28572,102.65472 229.28572,229.28572 z" />
   </g>
 </svg>
