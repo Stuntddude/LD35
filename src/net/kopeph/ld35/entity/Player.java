@@ -1,5 +1,8 @@
 package net.kopeph.ld35.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 
@@ -14,12 +17,16 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.contacts.Contact;
 
+import net.kopeph.ld35.Game;
+
 public class Player extends Entity {
 	private static final float RADIUS = 0.25f;
 	private static final float MAX_VEL = 4.0f;
 
 	//if >0, the player is standing on a surface, and therefore can jump
 	private int sensorCollisions;
+
+	public List<LocationInfo> recorded = new ArrayList<>();
 
 	public Player(float x, float y) {
 		//define physics body
@@ -49,12 +56,12 @@ public class Player extends Entity {
 		sensorFixture.isSensor = true;
 
 		//make!
-		body = game.world.createBody(playerDef);
+		body = Game.world.createBody(playerDef);
 		body.createFixture(playerFixture);
 		body.createFixture(sensorFixture);
 
 		//collision handler for sensor
-		game.world.setContactListener(new ContactListener() {
+		Game.world.setContactListener(new ContactListener() {
 			@Override
 			public void beginContact(Contact contact) {
 				//we're tagging the body with `this` as userData, to
@@ -113,5 +120,22 @@ public class Player extends Entity {
 		game.fill(sensorCollisions > 0? 0xFF00FF00 : 0xFF0000FF); //transparent light blue
 		game.rectMode(PConstants.RADIUS);
 		game.rect(position.x, position.y - RADIUS, RADIUS/4, RADIUS/8);
+
+
+		LocationInfo li = new LocationInfo();
+		li.millis = game.millis();
+		li.x = position.x;
+		li.y = position.y;
+		recorded.add(li);
+	}
+
+	public static class LocationInfo {
+		public long millis;
+		public float x, y;
+
+		@Override
+		public String toString() {
+			return String.format("%.3f: (%.3f, %.3f)", millis / 1000F, x, y);
+		}
 	}
 }

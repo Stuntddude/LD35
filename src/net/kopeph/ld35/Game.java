@@ -89,6 +89,10 @@ public final class Game extends PApplet {
 			right = true;
 		else if (key == 'w' || key == ' ')
 			player.jump();
+		else if (key == 'p') {
+			for (Player.LocationInfo li : player.recorded)
+				System.out.println(li);
+		}
 	}
 
 	@Override
