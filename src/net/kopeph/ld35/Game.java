@@ -70,6 +70,9 @@ public final class Game extends PApplet {
 			right = true;
 		} else if (key == 'w') {
 			player.body.applyLinearImpulse(new Vec2( 0, 0.6f), player.body.getPosition());
+		} else if (key == 'p') {
+			for (Player.LocationInfo li : player.recorded)
+				System.out.println(li);
 		}
 	}
 
