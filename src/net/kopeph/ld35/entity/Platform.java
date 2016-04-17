@@ -40,7 +40,7 @@ public class Platform extends Entity {
 	@Override
 	public void draw() {
 		Vec2 position = body.getPosition();
-		game.fill(0xFFFFFFFF); //white
+		game.fill(0xFF000000); //white
 		game.rectMode(PConstants.RADIUS);
 		game.rect(position.x, position.y, hx, hy);
 	}

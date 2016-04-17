@@ -90,7 +90,7 @@ public class Player extends Entity {
 	}
 
 	public void jump() {
-		if (sensorCollisions > 0) //if player is on ground
+//		if (sensorCollisions > 0) //if player is on ground
 			body.setLinearVelocity(new Vec2(body.getLinearVelocity().x, 6.0f));
 		System.out.println(sensorCollisions);
 	}
@@ -98,7 +98,7 @@ public class Player extends Entity {
 	@Override
 	public void draw() {
 		Vec2 position = body.getPosition();
-		game.fill(0xFFFFFFFF); //white
+		game.fill(0xFF000000); //black
 		game.ellipseMode(PConstants.RADIUS);
 		game.ellipse(position.x, position.y, RADIUS, RADIUS);
 

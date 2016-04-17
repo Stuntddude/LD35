@@ -12,6 +12,12 @@ import net.kopeph.ld35.entity.Player;
 public final class Game extends PApplet {
 	public static final Game game = new Game();
 
+	static {
+		//increased from 8 to 16 to accomodate more complex convex hulls
+		//can and will be decreased again if it becomes a performance bottleneck
+		Settings.maxPolygonVertices = 16;
+	}
+
 	//the game isn't based on real-world units, so gravity is arbitrary
 	public static final World world = new World(new Vec2(0, -15), false);
 	public static final ViewTransform transform = new ViewTransform();
@@ -40,12 +46,8 @@ public final class Game extends PApplet {
 		platforms[0] = new Platform(0, 0, 2.0f, 0.25f);
 		platforms[1] = new Platform(8, 0, 4.0f, 0.25f);
 
-		//increased from 8 to 16 to accomodate more complex convex hulls
-		//can and will be decreased again if it becomes a performance bottleneck
-		Settings.maxPolygonVertices = 16;
-
 		//load music
-		audio.playMusic("Lite Cranberry Basa.wav");
+//		audio.playMusic("Lite Cranberry Basa.wav");
 		//calculate beat period from beat frequency
 		beatInterval = 60.0f/142;
 	}
@@ -62,7 +64,7 @@ public final class Game extends PApplet {
 
 		transform.follow(player, timeStep);
 		transform.applyMatrix();
-		background(0);
+		background(0xFFFFFFFF); //white
 		level.draw();
 		platforms[0].draw();
 		platforms[1].draw();
