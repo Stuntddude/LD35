@@ -21,7 +21,7 @@ import net.kopeph.ld35.Game;
 
 public class Player extends Entity {
 	private static final float RADIUS = 0.25f;
-	private static final float MAX_VEL = 4.0f;
+	private static final float MAX_VEL = 3.0f;
 
 	//if >0, the player is standing on a surface, and therefore can jump
 	private int sensorCollisions;
@@ -43,7 +43,7 @@ public class Player extends Entity {
 		FixtureDef playerFixture = new FixtureDef();
 		playerFixture.shape = playerShape;
 		playerFixture.density = 0.5f;
-		playerFixture.friction = 0.1f;
+		playerFixture.friction = 0.08f;
 		playerFixture.restitution = 0.02f;
 
 		//create a sensor fixture at the bottom of the player

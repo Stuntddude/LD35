@@ -27,7 +27,11 @@ public final class Game extends PApplet {
 	private Level level;
 	private Platform[] platforms = new Platform[2];
 
+	/** in seconds */
 	public float beatInterval;
+	public long startNanos;
+	public long elapsedNanos;
+	public long lastNanos;
 
 	@Override
 	public void settings() {
@@ -40,26 +44,33 @@ public final class Game extends PApplet {
 		frameRate(60);
 		noStroke();
 
-		level = new Level("res/test level new.txt");
+		level = new Level("project.txt");
 
 		player = new Player(0, 5);
 		platforms[0] = new Platform(0, 0, 2.0f, 0.25f);
 		platforms[1] = new Platform(8, 0, 4.0f, 0.25f);
 
 		//load music
-//		audio.playMusic("Lite Cranberry Basa.wav");
+		audio.playMusic("Old Cranberries Test.wav");
 		//calculate beat period from beat frequency
 		beatInterval = 60.0f/142;
+
+		//start the timer AFTER all initialization, so we are less likely to miss anything
+		lastNanos = startNanos = System.nanoTime();
 	}
 
 	@Override
 	public void draw() {
-		float timeStep = 1.0f / 60.0f;
-		int velocityIterations = 6;
-		int positionIterations = 3;
+		long nanos = System.nanoTime();
+
+		float timeStep = (nanos - lastNanos)/1e9f; //in seconds
+		elapsedNanos = nanos - startNanos;
+		lastNanos = nanos;
 
 		player.move(left, right);
 
+		int velocityIterations = 6;
+		int positionIterations = 3;
 		world.step(timeStep, velocityIterations, positionIterations);
 
 		transform.follow(player, timeStep);
