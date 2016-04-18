@@ -97,6 +97,8 @@ public class Player extends Entity {
 			body.applyForce(new Vec2( 5.0f, 0), body.getPosition());
 		else if (sensorCollisions > 0 && PApplet.abs(velocity) > 0.1f)
 			body.applyForce(new Vec2(velocity > 0? -2.0f : 2.0f, 0), body.getPosition());
+
+		//TODO: death!
 	}
 
 	public void jump() {

@@ -7,5 +7,5 @@ Circle.svg:888,590,38,56,0,888,590,38,56,0,false,4,8,16
 Circle.svg:943,660,82,31,20,943,660,82,31,20,false,4,8,16
 Circle.svg:832,730,99,45,-20,832,730,99,45,-20,false,4,8,16
 Circle.svg:852,466,169,33,0,852,466,169,33,0,false,4,8,16
-Dingbat Star Fullcent.svg:61,287,301,288,0,61,287,301,288,0,false,4,8,16
-Dingbat Star Halfcirc.svg:802,90,174,164,0,802,90,174,164,0,false,4,8,16
+Dingbat Star Fullcent.svg:61,287,301,288,0,61,287,301,288,0,true,4,8,16
+Dingbat Star Halfcirc.svg:802,90,174,164,0,802,90,174,164,0,true,4,8,16

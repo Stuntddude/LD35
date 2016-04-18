@@ -10,6 +10,8 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
+import net.kopeph.ld35.util.Lists;
+
 public class SvgObject extends Entity {
 	private static final float SCALE = 100;
 
@@ -19,11 +21,10 @@ public class SvgObject extends Entity {
 	private final int bar1, bar2, bars;
 	private final Vec2[] points;
 
-	private final boolean rotates, moves, scales;
+	private final boolean rotates, moves, scales, solid, dingbat;
 
-	//???????
 	private Fixture currentFixture;
-	private float x, y, hx, hy, rad;
+	private float hx, hy;
 
 	public SvgObject(String line) {
 		String[] parts = line.split(":");
@@ -45,6 +46,8 @@ public class SvgObject extends Entity {
 		rotates = Boolean.parseBoolean(numbers[10]);
 		moves = aleft != bleft || atop != btop || adegrees != bdegrees;
 		scales = awidth != bwidth || aheight != bheight;
+		solid = Lists.contains(Lists.solids, parts[0]);
+		dingbat = Lists.contains(Lists.dingbats, parts[0]);
 
 		bar1 = Integer.parseInt(numbers[11]);
 		bar2 = Integer.parseInt(numbers[12]);
@@ -75,20 +78,24 @@ public class SvgObject extends Entity {
 		bodyDef.type = BodyType.KINEMATIC;
 		bodyDef.position.set(ax, ay);
 		bodyDef.angle = arad;
+		bodyDef.angularVelocity = rotates? game.random(-1.0f, 1.0f) : 0.0f;
 
-		FixtureDef fixture = getFixtureDef(ax, ay, ahx, ahy, arad);
+		//honestly not sure why this doesn't work
+		FixtureDef fixture;
+		if (bar1 == 0)
+			fixture = getFixtureDef(bhx, bhy);
+		else
+			fixture = getFixtureDef(ahx, ahy);
+
+		fixture.isSensor = !solid;
 
 		body = game.world.createBody(bodyDef);
 		currentFixture = body.createFixture(fixture);
 	}
 
-	private FixtureDef getFixtureDef(float _x, float _y, float _hx, float _hy, float _rad) {
-		//update current transform properties (for rendering)
-		x = _x;
-		y = _y;
+	private FixtureDef getFixtureDef(float _hx, float _hy) {
 		hx = _hx;
 		hy = _hy;
-		rad = _rad;
 
 		//create a set of scaled coordinates
 		Vec2[] vertices = new Vec2[points.length];
@@ -110,8 +117,6 @@ public class SvgObject extends Entity {
 		return fixture;
 	}
 
-	private int lastBeat = -1;
-
 	private boolean movedLastFrame;
 
 	//TODO: add behavior for coming to rest at exact end points
@@ -122,7 +127,7 @@ public class SvgObject extends Entity {
 
 		float time = game.elapsedNanos/1e9f;
 		int rawBeat = PApplet.ceil(time/game.beatInterval);
-		int beat = (rawBeat - 1) % bars;
+		int beat = rawBeat % bars;
 
 		float diff = time/game.beatInterval - rawBeat;
 		float f = PApplet.norm(diff, -1.0f, 0.0f); //normalized lerp factor for transformation
@@ -135,18 +140,12 @@ public class SvgObject extends Entity {
 				FixtureDef fixture;
 
 				if (beat == bar1) {
-					fixture = getFixtureDef(PApplet.lerp(ax,   bx,   f),
-					                        PApplet.lerp(ay,   by,   f),
-					                        PApplet.lerp(ahx,  bhx,  f),
-					                        PApplet.lerp(ahy,  bhy,  f),
-					                        PApplet.lerp(arad, brad, f));
+					fixture = getFixtureDef(PApplet.lerp(ahx,  bhx,  f),
+					                        PApplet.lerp(ahy,  bhy,  f));
 
 				} else {
-					fixture = getFixtureDef(PApplet.lerp(bx,   ax,   f),
-					                        PApplet.lerp(by,   ay,   f),
-					                        PApplet.lerp(bhx,  ahx,  f),
-					                        PApplet.lerp(bhy,  ahy,  f),
-					                        PApplet.lerp(brad, arad, f));
+					fixture = getFixtureDef(PApplet.lerp(bhx,  ahx,  f),
+					                        PApplet.lerp(bhy,  ahy,  f));
 				}
 
 				//replace current fixture with new one
@@ -182,8 +181,6 @@ public class SvgObject extends Entity {
 
 			movedLastFrame = false;
 		}
-
-		lastBeat = beat;
 	}
 
 	@Override
@@ -192,6 +189,7 @@ public class SvgObject extends Entity {
 		game.shapeMode(PConstants.CENTER);
 		game.translate(body.getPosition().x, body.getPosition().y);
 		game.rotate(body.getAngle());
+		//TODO: figure out how to draw the lines for the dingbats
 		game.shape(shape, 0, 0, hx*2, hy*2);
 		game.popMatrix();
 	}
