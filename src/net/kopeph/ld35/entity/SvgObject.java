@@ -16,9 +16,10 @@ public class SvgObject extends Entity {
 	private final PShape shape;
 	private final float ax, ay, ahx, ahy, arad;
 	private final float bx, by, bhx, bhy, brad;
-	private final boolean rot;
 	private final int bar1, bar2, bars;
 	private final Vec2[] points;
+
+	private final boolean rotates, moves, scales;
 
 	//???????
 	private Fixture currentFixture;
@@ -41,7 +42,9 @@ public class SvgObject extends Entity {
 		float bheight  = Float.parseFloat(numbers[8])/SCALE;
 		float bdegrees = Float.parseFloat(numbers[9]);
 
-		boolean rotating = Boolean.parseBoolean(numbers[10]);
+		rotates = Boolean.parseBoolean(numbers[10]);
+		moves = aleft != bleft || atop != btop || adegrees != bdegrees;
+		scales = awidth != bwidth || aheight != bheight;
 
 		bar1 = Integer.parseInt(numbers[11]);
 		bar2 = Integer.parseInt(numbers[12]);
@@ -59,8 +62,6 @@ public class SvgObject extends Entity {
 		by   = btop  + bhy;
 		brad = PApplet.radians(bdegrees);
 
-		rot = rotating;
-
 		//load unscaled vertices for later use
 		String[] coords = game.loadStrings(parts[0] + ".txt");
 		points = new Vec2[coords.length];
@@ -74,7 +75,6 @@ public class SvgObject extends Entity {
 		bodyDef.type = BodyType.KINEMATIC;
 		bodyDef.position.set(ax, ay);
 		bodyDef.angle = arad;
-
 
 		FixtureDef fixture = getFixtureDef(ax, ay, ahx, ahy, arad);
 
@@ -104,7 +104,7 @@ public class SvgObject extends Entity {
 		FixtureDef fixture = new FixtureDef();
 		fixture.shape = polygon;
 		fixture.density = 0.3f;
-		fixture.friction = 10.0f; //like a lot
+		fixture.friction = moves? 10.0f : 0.5f; //like a lot
 		fixture.restitution = 0.0f;
 
 		return fixture;
@@ -115,40 +115,48 @@ public class SvgObject extends Entity {
 	private boolean movedLastFrame;
 
 	//TODO: add behavior for coming to rest at exact end points
-	//TODO: make movement work via physics/impulses, to make it play a bit nicer with box2d
-	@Override
-	public void draw() {
+	//is that already covered? I'm not sure
+	public void move() {
+		if (!moves)
+			return; //no need
+
 		float time = game.elapsedNanos/1e9f;
 		int rawBeat = PApplet.ceil(time/game.beatInterval);
-		int beat = rawBeat % bars;
+		int beat = (rawBeat - 1) % bars;
 
 		float diff = time/game.beatInterval - rawBeat;
 		float f = PApplet.norm(diff, -1.0f, 0.0f); //normalized lerp factor for transformation
 
 		//if we are in the middle of a transition
 		if (f > 0.0f && f < 1.0f && (beat == bar1 || beat == bar2)) {
-			//I don't know if I have to replace the shape or the whole fixture
-			//so I'm playing it "safe" and replacing the whole fixture
-			FixtureDef fixture;
+			if (scales) {
+				//I don't know if I have to replace the shape or the whole fixture
+				//so I'm playing it "safe" and replacing the whole fixture
+				FixtureDef fixture;
 
-			if (beat == bar1) {
-				fixture = getFixtureDef(PApplet.lerp(ax,   bx,   f),
-				                        PApplet.lerp(ay,   by,   f),
-				                        PApplet.lerp(ahx,  bhx,  f),
-				                        PApplet.lerp(ahy,  bhy,  f),
-				                        PApplet.lerp(arad, brad, f));
+				if (beat == bar1) {
+					fixture = getFixtureDef(PApplet.lerp(ax,   bx,   f),
+					                        PApplet.lerp(ay,   by,   f),
+					                        PApplet.lerp(ahx,  bhx,  f),
+					                        PApplet.lerp(ahy,  bhy,  f),
+					                        PApplet.lerp(arad, brad, f));
 
-			} else {
-				fixture = getFixtureDef(PApplet.lerp(bx,   ax,   f),
-				                        PApplet.lerp(by,   ay,   f),
-				                        PApplet.lerp(bhx,  ahx,  f),
-				                        PApplet.lerp(bhy,  ahy,  f),
-				                        PApplet.lerp(brad, arad, f));
+				} else {
+					fixture = getFixtureDef(PApplet.lerp(bx,   ax,   f),
+					                        PApplet.lerp(by,   ay,   f),
+					                        PApplet.lerp(bhx,  ahx,  f),
+					                        PApplet.lerp(bhy,  ahy,  f),
+					                        PApplet.lerp(brad, arad, f));
+				}
+
+				//replace current fixture with new one
+				body.destroyFixture(currentFixture);
+				currentFixture = body.createFixture(fixture);
 			}
 
 			//if we're just beginning to move,
 			//set the velocity of the object so it will reach its destination in time
-			if (!movedLastFrame) {
+			if (!movedLastFrame && moves) {
 				//calculate delta to the desired final position
 				float dt = rawBeat*game.beatInterval - time; //in seconds
 				float dx = beat == bar1? bx - ax : ax - bx;
@@ -160,15 +168,11 @@ public class SvgObject extends Entity {
 
 				movedLastFrame = true;
 			}
-
-			//replace current fixture with new one
-			body.destroyFixture(currentFixture);
-			currentFixture = body.createFixture(fixture);
-		} else if (movedLastFrame) {
+		} else if (movedLastFrame && moves) {
 			//here is where we stop the object's movement
 			body.setLinearVelocity(new Vec2(0, 0));
 			body.setAngularVelocity(0);
-			currentFixture.setFriction(0.5f);
+			currentFixture.setFriction(0.5f); //dynamic friction may be broken now, I'm not sure
 
 			//as long as I am using round() or ceil() to find the beat, this *should* work
 			if (beat - 1 == bar1 || beat == bar1)
@@ -180,11 +184,14 @@ public class SvgObject extends Entity {
 		}
 
 		lastBeat = beat;
+	}
 
+	@Override
+	public void draw() {
 		game.pushMatrix();
 		game.shapeMode(PConstants.CENTER);
-		game.translate(x, y);
-		game.rotate(rad);
+		game.translate(body.getPosition().x, body.getPosition().y);
+		game.rotate(body.getAngle());
 		game.shape(shape, 0, 0, hx*2, hy*2);
 		game.popMatrix();
 	}

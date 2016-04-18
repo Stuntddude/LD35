@@ -18,6 +18,11 @@ public class Level {
 		}
 	}
 
+	public void move() {
+		for (SvgObject object : objects)
+			object.move();
+	}
+
 	public void draw() {
 		for (SvgObject object : objects)
 			object.draw();

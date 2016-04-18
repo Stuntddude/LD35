@@ -41,7 +41,8 @@ public final class Game extends PApplet {
 
 	@Override
 	public void setup() {
-		frameRate(60);
+		//increased from 60, mostly for improved physics granularity
+		frameRate(120);
 		noStroke();
 
 		level = new Level("test level new new.txt");
@@ -51,7 +52,7 @@ public final class Game extends PApplet {
 		platforms[1] = new Platform(8, 0, 4.0f, 0.25f);
 
 		//load music
-//		audio.playMusic("Old Cranberries Test.wav");
+		audio.playMusic("Old Cranberries Test.wav");
 		//calculate beat period from beat frequency
 		beatInterval = 60.0f/142;
 
@@ -67,6 +68,7 @@ public final class Game extends PApplet {
 		elapsedNanos = nanos - startNanos;
 		lastNanos = nanos;
 
+		level.move();
 		player.move(left, right);
 
 		int velocityIterations = 6;
@@ -81,6 +83,9 @@ public final class Game extends PApplet {
 		platforms[1].draw();
 		player.draw();
 		transform.resetMatrix();
+
+		//debug
+		System.out.println(frameRate);
 	}
 
 	@Override

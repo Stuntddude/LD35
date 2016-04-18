@@ -101,7 +101,7 @@ public class Player extends Entity {
 
 	public void jump() {
 //		if (sensorCollisions > 0) //if player is on ground
-			body.setLinearVelocity(new Vec2(body.getLinearVelocity().x, 6.0f));
+			body.applyLinearImpulse(new Vec2(0, 0.6f), body.getPosition());
 		System.out.println(sensorCollisions);
 	}
 
@@ -112,18 +112,10 @@ public class Player extends Entity {
 		game.ellipseMode(PConstants.RADIUS);
 		game.ellipse(position.x, position.y, RADIUS, RADIUS);
 
-		//debug angle
-		float angle = body.getAngle();
-		game.stroke(0xFFFF0000); //red
-		game.strokeWeight(0.1f);
-		game.line(position.x, position.y, position.x + PApplet.cos(angle)*RADIUS, position.y + PApplet.sin(angle)*RADIUS);
-		game.noStroke();
-
 		//debug sensor
 		game.fill(sensorCollisions > 0? 0xFF00FF00 : 0xFF0000FF); //transparent light blue
 		game.rectMode(PConstants.RADIUS);
 		game.rect(position.x, position.y - RADIUS, RADIUS/2, RADIUS/8);
-
 
 		LocationInfo li = new LocationInfo();
 		li.millis = game.millis();
