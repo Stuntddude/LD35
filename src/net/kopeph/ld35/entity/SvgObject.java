@@ -76,16 +76,14 @@ public class SvgObject extends Entity {
 
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.KINEMATIC;
-		bodyDef.position.set(ax, ay);
-		bodyDef.angle = arad;
+		if (bar1 == 0)
+			bodyDef.position.set(bx, by);
+		else
+			bodyDef.position.set(ax, ay);
+		bodyDef.angle = bar1 == 0? brad : arad;
 		bodyDef.angularVelocity = rotates? game.random(-1.0f, 1.0f) : 0.0f;
 
-		//honestly not sure why this doesn't work
-		FixtureDef fixture;
-		if (bar1 == 0)
-			fixture = getFixtureDef(bhx, bhy);
-		else
-			fixture = getFixtureDef(ahx, ahy);
+		FixtureDef fixture = getFixtureDef(ahx, ahy);
 
 		fixture.isSensor = !solid;
 
@@ -140,12 +138,11 @@ public class SvgObject extends Entity {
 				FixtureDef fixture;
 
 				if (beat == bar1) {
-					fixture = getFixtureDef(PApplet.lerp(ahx,  bhx,  f),
-					                        PApplet.lerp(ahy,  bhy,  f));
-
-				} else {
 					fixture = getFixtureDef(PApplet.lerp(bhx,  ahx,  f),
 					                        PApplet.lerp(bhy,  ahy,  f));
+				} else {
+					fixture = getFixtureDef(PApplet.lerp(ahx,  bhx,  f),
+					                        PApplet.lerp(ahy,  bhy,  f));
 				}
 
 				//replace current fixture with new one
@@ -176,7 +173,7 @@ public class SvgObject extends Entity {
 			//as long as I am using round() or ceil() to find the beat, this *should* work
 			if (beat - 1 == bar1 || beat == bar1)
 				body.setTransform(new Vec2(bx, by), brad);
-			else
+			else if (beat - 1 == bar2 || beat == bar2)
 				body.setTransform(new Vec2(ax, ay), arad);
 
 			movedLastFrame = false;
