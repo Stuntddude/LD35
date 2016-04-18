@@ -44,7 +44,7 @@ public final class Game extends PApplet {
 		frameRate(60);
 		noStroke();
 
-		level = new Level("project.txt");
+		level = new Level("test level new new.txt");
 
 		player = new Player(0, 5);
 		platforms[0] = new Platform(0, 0, 2.0f, 0.25f);

@@ -43,8 +43,8 @@ public class Player extends Entity {
 		FixtureDef playerFixture = new FixtureDef();
 		playerFixture.shape = playerShape;
 		playerFixture.density = 0.5f;
-		playerFixture.friction = 0.08f;
-		playerFixture.restitution = 0.02f;
+		playerFixture.friction = 0.3f;
+		playerFixture.restitution = 0.1f;
 
 		//create a sensor fixture at the bottom of the player
 		//used to detect whether the player is currently grounded, for sick jumpz
@@ -96,7 +96,7 @@ public class Player extends Entity {
 		else if (right && velocity < MAX_VEL)
 			body.applyForce(new Vec2( 5.0f, 0), body.getPosition());
 		else if (sensorCollisions > 0 && PApplet.abs(velocity) > 0.1f)
-			body.applyForce(new Vec2(velocity > 0? -2.5f : 2.5f, 0), body.getPosition());
+			body.applyForce(new Vec2(velocity > 0? -2.0f : 2.0f, 0), body.getPosition());
 	}
 
 	public void jump() {

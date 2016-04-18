@@ -103,8 +103,8 @@ public class SvgObject extends Entity {
 		//create fixture
 		FixtureDef fixture = new FixtureDef();
 		fixture.shape = polygon;
-		fixture.density = 0.5f;
-		fixture.friction = 1.0f;
+		fixture.density = 0.3f;
+		fixture.friction = 10.0f; //like a lot
 		fixture.restitution = 0.0f;
 
 		return fixture;
@@ -112,14 +112,18 @@ public class SvgObject extends Entity {
 
 	private int lastBeat = -1;
 
+	private boolean movedLastFrame;
+
+	//TODO: add behavior for coming to rest at exact end points
+	//TODO: make movement work via physics/impulses, to make it play a bit nicer with box2d
 	@Override
 	public void draw() {
 		float time = game.elapsedNanos/1e9f;
-		int rawBeat = PApplet.round(time/game.beatInterval);
+		int rawBeat = PApplet.ceil(time/game.beatInterval);
 		int beat = rawBeat % bars;
 
 		float diff = time/game.beatInterval - rawBeat;
-		float f = PApplet.norm(diff, -0.5f, 0.0f); //normalized lerp factor for transformation
+		float f = PApplet.norm(diff, -1.0f, 0.0f); //normalized lerp factor for transformation
 
 		//if we are in the middle of a transition
 		if (f > 0.0f && f < 1.0f && (beat == bar1 || beat == bar2)) {
@@ -142,12 +146,37 @@ public class SvgObject extends Entity {
 				                        PApplet.lerp(brad, arad, f));
 			}
 
+			//if we're just beginning to move,
+			//set the velocity of the object so it will reach its destination in time
+			if (!movedLastFrame) {
+				//calculate delta to the desired final position
+				float dt = rawBeat*game.beatInterval - time; //in seconds
+				float dx = beat == bar1? bx - ax : ax - bx;
+				float dy = beat == bar1? by - ay : ay - by;
+				float drad = beat == bar1? brad - arad : arad - brad;
+
+				body.setLinearVelocity(new Vec2(dx/dt, dy/dt)); //...I think?
+				body.setAngularVelocity(drad/dt);
+
+				movedLastFrame = true;
+			}
+
 			//replace current fixture with new one
 			body.destroyFixture(currentFixture);
 			currentFixture = body.createFixture(fixture);
+		} else if (movedLastFrame) {
+			//here is where we stop the object's movement
+			body.setLinearVelocity(new Vec2(0, 0));
+			body.setAngularVelocity(0);
+			currentFixture.setFriction(0.5f);
 
-			//move body to its new location
-			body.setTransform(new Vec2(x, y), rad);
+			//as long as I am using round() or ceil() to find the beat, this *should* work
+			if (beat - 1 == bar1 || beat == bar1)
+				body.setTransform(new Vec2(bx, by), brad);
+			else
+				body.setTransform(new Vec2(ax, ay), arad);
+
+			movedLastFrame = false;
 		}
 
 		lastBeat = beat;

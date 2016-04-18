@@ -3,6 +3,7 @@ package net.kopeph.ld35;
 import ddf.minim.AudioPlayer;
 import ddf.minim.Minim;
 
+//TODO: make this work with the layered stems keenan sent me
 public final class Audio {
 	private final Minim minim = new Minim(Game.game);
 

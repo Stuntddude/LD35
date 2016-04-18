@@ -30,7 +30,7 @@ public class Platform extends Entity {
 		FixtureDef platFixture = new FixtureDef();
 		platFixture.shape = platShape;
 		platFixture.density = 0.5f;
-		platFixture.friction = 1.0f;
+		platFixture.friction = 0.5f;
 		platFixture.restitution = 0.0f;
 
 		body = game.world.createBody(platDef);
