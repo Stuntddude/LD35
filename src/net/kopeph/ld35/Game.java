@@ -1,6 +1,7 @@
 package net.kopeph.ld35;
 
 import processing.core.PApplet;
+import processing.core.PFont;
 
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
@@ -45,7 +46,11 @@ public final class Game extends PApplet {
 		frameRate(120);
 		noStroke();
 
-		level = new Level("test level new new.txt");
+		PFont myFont = createFont("Arial", 64);
+		  textFont(myFont);
+		  textAlign(CENTER, CENTER);
+
+		level = new Level("test level new new.txt", 9);
 
 		player = new Player(0, 5);
 		platforms[0] = new Platform(0, 0, 2.0f, 0.25f);
@@ -67,6 +72,13 @@ public final class Game extends PApplet {
 		float timeStep = (nanos - lastNanos)/1e9f; //in seconds
 		elapsedNanos = nanos - startNanos;
 		lastNanos = nanos;
+
+		if (level == null) { //win condition
+			background(0xFFAAEEAA); //paper green
+			fill(0);
+			text("a winner is you!", width/2, height/2);
+			return;
+		}
 
 		level.move();
 		player.move(left, right);

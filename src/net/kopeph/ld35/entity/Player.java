@@ -102,6 +102,7 @@ public class Player extends Entity {
 		return b;
 	}
 
+	private final String LEVEL_II = "test level new new two.txt";
 	public void move(boolean left, boolean right) {
 		float velocity = body.getLinearVelocity().x;
 		if (left && !right && velocity > -MAX_VEL)
@@ -117,8 +118,11 @@ public class Player extends Entity {
 		if (body.getPosition().y < -10)
 			die();
 
-		if (body.getPosition().y > 9) {
-			game.level = new Level("test level new new two.txt");
+		if (body.getPosition().y > game.level.threshold) {
+			if (game.level.filename.equals(LEVEL_II))
+				game.level = null; ///XXX: this is a terrible win condition
+			else
+				game.level = new Level("test level new new two.txt", 6);
 			die();
 		}
 	}

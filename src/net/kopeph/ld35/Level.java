@@ -5,9 +5,16 @@ import net.kopeph.ld35.entity.SvgObject;
 public class Level {
 	private static final Game game = Game.game;
 
+	public final String filename;
+
 	SvgObject[] objects;
 
-	public Level(String filename) {
+	public final int threshold;
+
+	public Level(String filename, int threshold) {
+		this.filename = filename;
+		this.threshold = threshold;
+
 		String[] lines = game.loadStrings(filename);
 		objects = new SvgObject[lines.length];
 
@@ -28,7 +35,7 @@ public class Level {
 			object.draw();
 
 		game.stroke(0xFF00FF00);
-		game.line(-100, 9, 100, 9);
+		game.line(-100, threshold, 100, threshold);
 		game.noStroke();
 	}
 }
