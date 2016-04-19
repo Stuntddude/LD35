@@ -26,5 +26,9 @@ public class Level {
 	public void draw() {
 		for (SvgObject object : objects)
 			object.draw();
+
+		game.stroke(0xFF00FF00);
+		game.line(-100, 9, 100, 9);
+		game.noStroke();
 	}
 }

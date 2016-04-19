@@ -24,7 +24,7 @@ public final class Game extends PApplet {
 	public static final Audio audio = new Audio();
 
 	private Player player;
-	private Level level;
+	public Level level;
 	private Platform[] platforms = new Platform[2];
 
 	/** in seconds */
@@ -77,7 +77,7 @@ public final class Game extends PApplet {
 
 		transform.follow(player, timeStep);
 		transform.applyMatrix();
-		background(0xFFFFFFFF); //white
+		background(0xFFEEEEDD); //paper white
 		level.draw();
 		platforms[0].draw();
 		platforms[1].draw();

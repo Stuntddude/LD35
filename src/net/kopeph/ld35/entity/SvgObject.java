@@ -10,12 +10,14 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
+import net.kopeph.ld35.Game;
 import net.kopeph.ld35.util.Lists;
 
 public class SvgObject extends Entity {
 	private static final float SCALE = 100;
 
 	private final PShape shape;
+	private final int color;
 	private final float ax, ay, ahx, ahy, arad;
 	private final float bx, by, bhx, bhy, brad;
 	private final int bar1, bar2, bars;
@@ -29,6 +31,8 @@ public class SvgObject extends Entity {
 	public SvgObject(String line) {
 		String[] parts = line.split(":");
 		shape = game.loadShape(parts[0]);
+		shape.disableStyle();
+		color = Lists.oneOf(Lists.colors);
 		String[] numbers = parts[1].split(",");
 
 		float aleft    = Float.parseFloat(numbers[0])/SCALE;
@@ -87,7 +91,7 @@ public class SvgObject extends Entity {
 
 		fixture.isSensor = !solid;
 
-		body = game.world.createBody(bodyDef);
+		body = Game.world.createBody(bodyDef);
 		currentFixture = body.createFixture(fixture);
 	}
 
@@ -186,7 +190,8 @@ public class SvgObject extends Entity {
 		game.shapeMode(PConstants.CENTER);
 		game.translate(body.getPosition().x, body.getPosition().y);
 		game.rotate(body.getAngle());
-		//TODO: figure out how to draw the lines for the dingbats
+		game.fill(color);
+		game.noStroke();
 		game.shape(shape, 0, 0, hx*2, hy*2);
 		game.popMatrix();
 	}

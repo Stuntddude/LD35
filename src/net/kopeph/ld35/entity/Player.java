@@ -12,16 +12,20 @@ import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.contacts.Contact;
 
 import net.kopeph.ld35.Game;
+import net.kopeph.ld35.Level;
 
 public class Player extends Entity {
 	private static final float RADIUS = 0.25f;
 	private static final float MAX_VEL = 3.0f;
+
+	private final float initialX, initialY;
 
 	//if >0, the player is standing on a surface, and therefore can jump
 	private int sensorCollisions;
@@ -29,36 +33,10 @@ public class Player extends Entity {
 	public List<LocationInfo> recorded = new ArrayList<>();
 
 	public Player(float x, float y) {
-		//define physics body
-		BodyDef playerDef = new BodyDef();
-		playerDef.type = BodyType.DYNAMIC;
-		playerDef.fixedRotation = true;
-		playerDef.position.set(x, y);
-		playerDef.userData = this;
+		initialX = x;
+		initialY = y;
 
-		//create main (collision) fixture
-		CircleShape playerShape = new CircleShape();
-		playerShape.m_radius = RADIUS;
-
-		FixtureDef playerFixture = new FixtureDef();
-		playerFixture.shape = playerShape;
-		playerFixture.density = 0.5f;
-		playerFixture.friction = 0.3f;
-		playerFixture.restitution = 0.1f;
-
-		//create a sensor fixture at the bottom of the player
-		//used to detect whether the player is currently grounded, for sick jumpz
-		PolygonShape sensorShape = new PolygonShape();
-		sensorShape.setAsBox(RADIUS/2, RADIUS/8, new Vec2(0, -RADIUS), 0);
-
-		FixtureDef sensorFixture = new FixtureDef();
-		sensorFixture.shape = sensorShape;
-		sensorFixture.isSensor = true;
-
-		//make!
-		body = Game.world.createBody(playerDef);
-		body.createFixture(playerFixture);
-		body.createFixture(sensorFixture);
+		body = createBody(x, y);
 
 		//collision handler for sensor
 		Game.world.setContactListener(new ContactListener() {
@@ -89,6 +67,41 @@ public class Player extends Entity {
 		});
 	}
 
+	private Body createBody(float x, float y) {
+		//define physics body
+		BodyDef playerDef = new BodyDef();
+		playerDef.type = BodyType.DYNAMIC;
+		playerDef.fixedRotation = true;
+		playerDef.position.set(x, y);
+		playerDef.userData = this;
+
+		//create main (collision) fixture
+		CircleShape playerShape = new CircleShape();
+		playerShape.m_radius = RADIUS;
+
+		FixtureDef playerFixture = new FixtureDef();
+		playerFixture.shape = playerShape;
+		playerFixture.density = 0.5f;
+		playerFixture.friction = 0.3f;
+		playerFixture.restitution = 0.1f;
+
+		//create a sensor fixture at the bottom of the player
+		//used to detect whether the player is currently grounded, for sick jumpz
+		PolygonShape sensorShape = new PolygonShape();
+		sensorShape.setAsBox(RADIUS/2, RADIUS/8, new Vec2(0, -RADIUS), 0);
+
+		FixtureDef sensorFixture = new FixtureDef();
+		sensorFixture.shape = sensorShape;
+		sensorFixture.isSensor = true;
+
+		//make!
+		Body b = Game.world.createBody(playerDef);
+		b.createFixture(playerFixture);
+		b.createFixture(sensorFixture);
+
+		return b;
+	}
+
 	public void move(boolean left, boolean right) {
 		float velocity = body.getLinearVelocity().x;
 		if (left && !right && velocity > -MAX_VEL)
@@ -98,11 +111,24 @@ public class Player extends Entity {
 		else if (sensorCollisions > 0 && PApplet.abs(velocity) > 0.1f)
 			body.applyForce(new Vec2(velocity > 0? -2.0f : 2.0f, 0), body.getPosition());
 
-		//TODO: death!
+		System.err.printf("<%f, %f>\n", body.getPosition().x,body.getPosition().y);
+
+		//TODO: better death!
+		if (body.getPosition().y < -10)
+			die();
+
+		if (body.getPosition().y > 9) {
+			game.level = new Level("test level new new two.txt");
+			die();
+		}
+	}
+
+	public void die() {
+		body = createBody(initialX, initialY);
 	}
 
 	public void jump() {
-//		if (sensorCollisions > 0) //if player is on ground
+		if (sensorCollisions > 0) //if player is on ground
 			body.applyLinearImpulse(new Vec2(0, 0.6f), body.getPosition());
 		System.out.println(sensorCollisions);
 	}
@@ -115,9 +141,9 @@ public class Player extends Entity {
 		game.ellipse(position.x, position.y, RADIUS, RADIUS);
 
 		//debug sensor
-		game.fill(sensorCollisions > 0? 0xFF00FF00 : 0xFF0000FF); //transparent light blue
-		game.rectMode(PConstants.RADIUS);
-		game.rect(position.x, position.y - RADIUS, RADIUS/2, RADIUS/8);
+		//game.fill(sensorCollisions > 0? 0xFF00FF00 : 0xFF0000FF); //transparent light blue
+		//game.rectMode(PConstants.RADIUS);
+		//game.rect(position.x, position.y - RADIUS, RADIUS/2, RADIUS/8);
 
 		LocationInfo li = new LocationInfo();
 		li.millis = game.millis();
