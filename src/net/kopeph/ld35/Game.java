@@ -90,7 +90,8 @@ public final class Game extends PApplet {
 		transform.follow(player, timeStep);
 		transform.applyMatrix();
 		background(0xFFEEEEDD); //paper white
-		level.draw();
+		if (level != null)
+			level.draw();
 		platforms[0].draw();
 		platforms[1].draw();
 		player.draw();
